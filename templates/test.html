@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Flask Tutorial</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+            $(function() {
+              $('a#test').bind('click', function() {
+                $.getJSON('/background_process_test',
+                    function(data) {
+                  //do nothing
+                });
+                return false;
+              });
+            });
+    </script>
+  </head>
+  <body>
+    <h1> My First Try Using Flask </h1>
+    <p> Flask is Fun </p>
+    <button>click here to see if an image is depp <button>
+  </body>
+  
+
+
+
+<div class='container'>
+    <h3>Test</h3>
+        <form>
+            <a href=# id=test><button class='btn btn-default'>Test</button></a>
+        </form>
+
+</div>
+</html>
