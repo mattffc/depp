@@ -11,4 +11,4 @@ To get this to run:
 Note this one takes ages (5 mins)
 4. Then run the webserver with:
 4a. Sudo python3 webserver.py
-Note in order for this to run you need the templates folder, empty uploads folder
+Note in order for this to run you need the templates folder, empty uploads folder, and an image of depp called depp1.jpg in working directory
