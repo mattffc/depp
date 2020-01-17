@@ -18,26 +18,29 @@ app.secret_key = "secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
+# Check that the uploaded file has the right extension
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
     
-def get_depp_encoding():
-    depp_img_filepath = DEPP_FOLDER/"1.jpg"
-    depp_image = face_recognition.load_image_file(depp_img_filepath)
-    return [face_recognition.face_encodings(depp_image)[0]]
+def get_depp_encodings():
+    img_filepaths = [DEPP_FOLDER/f for f in os.listdir(DEPP_FOLDER) if allowed_file(f)]
+    imgs = [face_recognition.load_image_file(fp) for fp in img_filepaths]
+    return [face_recognition.face_encodings(img)[0] for img in imgs]
 
-depp_encoding = get_depp_encoding()
+depp_encodings = get_depp_encodings()
 
 def is_image_depp(filepath):
     unknown_image = face_recognition.load_image_file(filepath)
     unknown_encodings = face_recognition.face_encodings(unknown_image)
-    if len(unknown_encodings)==0:
+    # If len==0 => no people, therefore no Depp :(
+    if len(unknown_encodings) == 0:
         return False
-    results = face_recognition.compare_faces(depp_encoding, unknown_encodings[0])
-    if len(results)==1 and results[0]==True:
-        return True
-    else:
-        return False
+    # Check unkown encoding against all known Depp encodings
+    for depp_encoding in depp_encodings:
+        is_depp = face_recognition.compare_faces([depp_encoding], unknown_encodings[0])[0]
+        if is_depp:
+            return True
+    return False
 
 @app.route('/')
 def upload_form():
@@ -46,27 +49,33 @@ def upload_form():
 
 @app.route('/', methods=['POST'])
 def upload_file():
+    # If a file is posted enter here
     if request.method == 'POST':
-        # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
         file = request.files['file']
+        # If file empty name, return
         if file.filename == '':
             flash('No file selected for uploading')
             return redirect(request.url)
+        # If file correctly uploaded, enter here
         if file and allowed_file(file.filename):
-            filename = Path(secure_filename(file.filename))
-            file.save(str(app.config['UPLOAD_FOLDER']/filename))
+            filename = secure_filename(file.filename)
+            # Save the file
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('File successfully uploaded')
+            full_filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
-            full_filename = app.config['UPLOAD_FOLDER']/filename
+            # See if it is Depp
             is_depp = is_image_depp(full_filename)
-
+            
+            # Return the template with the results
             return render_template(
                     "upload.html", 
                     user_image = full_filename, 
                     testText = getStrForResult(is_depp))
+            
     else:
         flash('Allowed file types are txt, pdf, png, jpg, jpeg, gif')
     return redirect(request.url)
