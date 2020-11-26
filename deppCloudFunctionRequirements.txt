@@ -1,0 +1,5 @@
+#deppCloudFunction requirements
+
+
+google-cloud-storage
+face-recognition

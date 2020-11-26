@@ -49,7 +49,7 @@ def upload_file():
             unknown_image = face_recognition.load_image_file(full_filename)
             unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
             
-            known_images = ["depp1.jpg","depp2.jpg"]
+            known_images = ["depp1.jpeg","depp2.jpg"]
             is_face_same = False
             for known_image_name in known_images:
                 # Get the face image of the known depp image

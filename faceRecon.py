@@ -5,6 +5,8 @@ import face_recognition
 #face_locations = face_recognition.face_locations(image)
 print("it worked")
 
+pathTest = r"C:\Users\mattf\OneDrive\Documents\deppLearning\johnny\img_7.jpeg"
+pathTrue = r"C:\Users\mattf\OneDrive\Documents\deppLearning\static\20170314_114950-min.jpg"
 
 known_image = face_recognition.load_image_file("jon1.jpg")
 unknown_image = face_recognition.load_image_file("notJon.jpg")
