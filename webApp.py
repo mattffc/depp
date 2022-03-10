@@ -107,4 +107,5 @@ def getStrForResult(is_depp):
         return "This is not Depp"
 
 if __name__ == "__main__":
+    print("hello")
     app.run(host='0.0.0.0', port=80, debug=True,threaded=False)
