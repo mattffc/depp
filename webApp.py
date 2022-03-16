@@ -23,13 +23,20 @@ def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
     
 def get_depp_encodings():
+
     img_filepaths = [DEPP_FOLDER/f for f in os.listdir(DEPP_FOLDER) if allowed_file(f)]
-    imgs = [face_recognition.load_image_file(fp) for fp in img_filepaths]
-    return [face_recognition.face_encodings(img)[0] for img in imgs]
+    encodings = []
+    for img_filepath in img_filepaths:
+        img = face_recognition.load_image_file(img_filepath)
+        encoding = face_recognition.face_encodings(img)[0]
+        encodings = encoding.append(encoding)
+    print("encodings len",len(encodings))
+    #imgs = [face_recognition.load_image_file(fp) for fp in img_filepaths]
+    return encodings#[face_recognition.face_encodings(img)[0] for img in imgs]
 
-depp_encodings = get_depp_encodings()
 
-def is_image_depp(filepath):
+
+def is_image_depp(filepath,depp_encodings):
     unknown_image = face_recognition.load_image_file(filepath)
     unknown_encodings = face_recognition.face_encodings(unknown_image)
     # If len==0 => no people, therefore no Depp :(
@@ -69,7 +76,7 @@ def upload_file():
 
             # See if it is Depp
             is_depp = is_image_depp(full_filename)
-            
+            '''
             # Get the face encoding of the unknown image
             unknown_image = face_recognition.load_image_file(full_filename)
             unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
@@ -89,7 +96,7 @@ def upload_file():
                 # If there is a match for any of the known faces, break
                 if is_face_same:
                     break
-
+            '''
             # Return the template with the results
             return render_template(
                     "upload.html", 
@@ -108,4 +115,9 @@ def getStrForResult(is_depp):
 
 if __name__ == "__main__":
     print("hello")
-    app.run(host='0.0.0.0', port=80, debug=True,threaded=False)
+    depp_encodings = get_depp_encodings()
+    #app.run(host='0.0.0.0', port=80, debug=True,threaded=False)
+    
+    filepath = ""
+    is_depp = is_image_depp(filepath,depp_encodings)
+    print("is_depp",is_depp)
